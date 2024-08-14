@@ -1,0 +1,9 @@
+lintchecker/README.md
+
+IF task uses file module AND mode is integer starting with '6' THEN add failure message
+
+This one-line pseudocode captures the core idea behind the custom lint rule:
+Check if the task is using the file module.
+Check if the mode value is an integer that starts with '6' (indicating it could be an octal number).
+If both conditions are met, add a failure message to the lint output.
+The actual implementation in Python will be more verbose due to the specific syntax and methods required, but this simplified version conveys the essential logic that the rule aims to enforce - ensuring that file permissions are specified correctly using a string with a leading zero or the 0o prefix.
