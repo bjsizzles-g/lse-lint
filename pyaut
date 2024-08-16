@@ -1,0 +1,17 @@
+b
+import pyautogui
+import time
+
+# Duration to prevent the computer from locking (in seconds)
+duration = 2 * 60 * 60  # 2 hours
+interval = 30  # Interval between actions (in seconds)
+end_time = time.time() + duration
+
+try:
+    while time.time() < end_time:
+        pyautogui.move(1, 0)  # Move mouse 1 pixel to the right
+        pyautogui.move(-1, 0)  # Move mouse 1 pixel back to the left
+        time.sleep(interval)  # Wait for the specified interval
+    print("Finished running for 2 hours.")
+except KeyboardInterrupt:
+    print("Stopped by the user.")
