@@ -1,0 +1,39 @@
+deprecated
+
+import os
+import yaml
+
+# List of deprecated modules
+DEPRECATED_MODULES = [
+    'vsphere_guest',
+    'digital_ocean',
+    'ec2',
+    'azure_rm_virtualmachine',
+    'gcp_compute_instance',
+    'os_server',
+    'ovirt_vms',
+    'rax',
+    'profitbricks'
+]
+
+def check_deprecated_modules(playbook_path):
+    with open(playbook_path, 'r') as file:
+        try:
+            content = yaml.safe_load(file)
+            for task in content:
+                if isinstance(task, dict):
+                    for key in task.keys():
+                        if key in DEPRECATED_MODULES:
+                            print(f"Deprecated module '{key}' found in {playbook_path}")
+        except yaml.YAMLError as exc:
+            print(f"Error reading {playbook_path}: {exc}")
+
+def scan_directory_for_playbooks(directory):
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(('.yml', '.yaml')):
+                check_deprecated_modules(os.path.join(root, file))
+
+if __name__ == "__main__":
+    directory_to_scan = "./"  # Change this to the directory where your playbooks are located
+    scan_directory_for_playbooks(directory_to_scan)
