@@ -1,45 +1,34 @@
 .
-import yaml
 
-def lint_ansible_task(task):
-    errors = []
+import json
+import re
 
-    # Check if the task has a name
-    if 'name' not in task:
-        errors.append("Task is missing a 'name' field.")
+class TaskNameRule:
+    def __init__(self):
+        self.errors = []
 
-    # Check if the task uses an Ansible module
-    modules = ['ansible.builtin.shell', 'ansible.builtin.command', 'ansible.builtin.copy']
-    if not any(module in task for module in modules):
-        errors.append("Task is missing an Ansible module or uses an unsupported module.")
+    def check_task_names(self, playbook):
+        for item in playbook:
+            if isinstance(item, dict):
+                if 'tasks' in item:
+                    for task in item['tasks']:
+                        if not isinstance(task, dict):
+                            continue
+                        if 'name' not in task:
+                            self.errors.append(f"Task missing 'name': {json.dumps(task)}")
 
-    # Example: Warn if using 'shell' module without 'creates' or 'removes'
-    if 'ansible.builtin.shell' in task:
-        if not any(key in task['ansible.builtin.shell'] for key in ['creates', 'removes']):
-            errors.append("Using 'shell' module without 'creates' or 'removes' may cause idempotency issues.")
+    def lint(self, playbook_path):
+        with open(playbook_path, 'r') as file:
+            playbook = json.load(file)
+            self.check_task_names(playbook)
 
-    return errors
-
-def lint_playbook(playbook_path):
-    with open(playbook_path, 'r') as file:
-        playbook = yaml.safe_load(file)
-
-    errors = []
-    for task in playbook:
-        task_errors = lint_ansible_task(task)
-        if task_errors:
-            errors.append({"task": task.get('name', 'Unnamed Task'), "errors": task_errors})
-
-    return errors
+    def print_errors(self):
+        for error in self.errors:
+            print(f"Error: {error}")
 
 # Example usage
-playbook_path = 'playbook.yml'  # Replace with the path to your playbook file
-errors = lint_playbook(playbook_path)
-
-if errors:
-    for error in errors:
-        print(f"Task '{error['task']}' has the following issues:")
-        for e in error['errors']:
-            print(f"  - {e}")
-else:
-    print("No issues found!")
+if __name__ == "__main__":
+    import sys
+    rule = TaskNameRule()
+    rule.lint(sys.argv[1])
+    rule.print_errors()
