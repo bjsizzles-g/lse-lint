@@ -1,0 +1,12 @@
+octal
+
+For example, the following would trigger the octal_mode lint rule:
+
+mode: 123 (invalid octal mode)
+mode: abc (invalid octal mode)
+mode: 0abc (invalid octal mode)
+On the other hand, the following would pass the octal_mode lint rule:
+
+mode: 0755 (valid octal mode)
+mode: 0644 (valid octal mode)
+mode: 0777 (valid octal mode)
