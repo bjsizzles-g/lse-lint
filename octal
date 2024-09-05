@@ -10,3 +10,20 @@ On the other hand, the following would pass the octal_mode lint rule:
 mode: 0755 (valid octal mode)
 mode: 0644 (valid octal mode)
 mode: 0777 (valid octal mode)
+
+def validate_octal_mode(mode):
+    # Check if the mode starts with a zero (0)
+    if not mode.startswith('0'):
+        return False
+
+    # Check if the mode has exactly three digits (0-7)
+    if len(mode) != 3:
+        return False
+
+    # Check if the digits are valid (0-7)
+    for digit in mode[1:]:
+        if int(digit) < 0 or int(digit) > 7:
+            return False
+
+    # If all checks pass, the mode is valid
+    return True
